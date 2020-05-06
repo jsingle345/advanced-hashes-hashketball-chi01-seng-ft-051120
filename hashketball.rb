@@ -130,7 +130,6 @@ end
 
 # Write code here
 def num_points_scored(name)
-  
   game_hash.each do |team_name, value|
 
   value[:players].each do |player_hash|
@@ -173,51 +172,61 @@ def team_names
 end
 
 
-
-def player_numbers(team_name)
+def player_numbers(name)
   jerseys_num = []
   
-  game_hash.collect do |team, stats|
-     if stats[:team_name] == team_name
-      stats[:players].collect do |player, data|
-        jerseys_num << (data[:number])
-     end
+  game_hash.each do |location, teams|
+    teams.each do |team_info, data|
+      if data == name 
+      game_hash[location][:players].each do |player|
+        jerseys_num << player[:number]
+      end
+      end
     end
-  end
+  end 
   jerseys_num
 end
 
-def player_stats(player_name)
-playerdata = " "
- game_hash.collect do |team, stats|
-  stats[:players].collect do |player, data|
 
-    if player == player_name
-      playerdata = data
+def player_stats(player_name)
+player_stats = {}
+
+ game_hash.each do |location, team|
+   team.each do |team_info, info_data|
+    if team_info == :players 
+      game_hash[location][team_info].each do |player_data|
+        
+       if player_data[:player_name] == player_name
+        #player_stats = player_data.delete_if {|key, value| key == :player_name }   
+        player_stats = player_data
+       end  
+      end  
     end 
-  end 
+   end 
  end 
-playerdata
+ player_stats
 end 
 
-def big_shoe_rebounds
-  playerrebound = nil 
-  numbs = []
-  biggest_shoesize = nil 
-      game_hash.collect do |team, stats|
-        stats[:players].collect do |player, data|
-          numbs.push(data[:shoe])
-          biggest_shoesize = numbs.sort[-1] 
-             data.collect do |category, stat|
-               if category == :shoe 
-                if stat == biggest_shoesize
-                  playerrebound =  data[:rebounds]
-                end 
-              end
-            end
-          end
-        end
-        playerrebound
+
+def big_shoe_rebounds 
+  large_shoe = 0
+  get_boards = 0
+  
+  game_hash.each do |location, team|
+    team[:players].each do |player|
+      
+      if player[:shoe] > large_shoe
+      large_shoe = player[:shoe]
       end
+      
+      if player[:shoe] == large_shoe
+      get_boards = player[:rebounds]
+      end
+    end
+  end
+  get_boards
+end
+
+
 
  
